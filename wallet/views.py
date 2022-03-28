@@ -12,6 +12,7 @@ from rest_framework.permissions import IsAdminUser
 This endpoint gets all the wallet object for each user.
 """
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def all_wallets(request):
     if request.method == "GET":
         user_wallets = Wallet.objects.all()
@@ -25,6 +26,7 @@ def all_wallets(request):
 This endpoint handles the display of each individual wallet, provided the user id is passed in the url as well.
 """
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def user_wallet_view(request, id):
     if request.method == "GET":
         user_wallet = Wallet.objects.get(id=id)
