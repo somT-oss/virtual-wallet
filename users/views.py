@@ -42,13 +42,13 @@ def login_employee(request):
                 return Response ({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
-                })
+                }, status=status.HTTP_200_OK)
             else:
-                return Response({"Error": f"User with {user_email} does not exist"})
+                return Response({"Error": f"User with {user_email} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"Error": user_serializer.errors})
+            return Response({"Error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"Error": "Invalid request type"})
+        return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
 """
 This endpoint handle returning of individual users with their firstname passed as a parameter in the url
@@ -60,9 +60,9 @@ def get_user(request, firstname):
         user = User.objects.get(first_name=firstname)
         serialized_user = UserRegistrationSerializer(user)
 
-        return Response({"Message": f"Hello {serialized_user.data.get('first_name')} {serialized_user.data.get('last_name')}"})
+        return Response({"Message": f"Hello {serialized_user.data.get('first_name')} {serialized_user.data.get('last_name')}"}, status=status.HTTP_200_OK)
     else:
-        return Response({"Error": "Invalid request type"})
+        return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
 """
 This endpoint handles updating user information of individual users by passing the firstname as a parameter in the url
@@ -75,9 +75,9 @@ def update_user(request, firstname):
         if update_serializer.is_valid():
             update_serializer.save()
 
-            return Response({"Message": "User data has been updated"})
+            return Response({"Message": "User data has been updated"}, status=status.HTTP_200_OK)
         else:
-            return Response(update_serializer.errors)
+            return Response(update_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"Error": "You don't have perimissions to edit this users info"})
+        return Response({"Error": "You don't have perimissions to edit this users info"}, status=status.HTTP_400_BAD_REQUEST)
         
