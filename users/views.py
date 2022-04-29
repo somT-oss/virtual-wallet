@@ -96,4 +96,17 @@ def update_user(request, firstname):
             return Response(update_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"Error": "You don't have perimissions to edit this users info"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def delete_all_users(request):
+    if request.method == 'GET':
+        try:
+            all_users = User.objects.all()
+            all_users.delete()
+
+            return Response({"Message": "All users have been deleted successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"Error": f"The error {e} occured"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"Error": "Invallid request type"}, status=status.HTTP_400_BAD_REQUEST)

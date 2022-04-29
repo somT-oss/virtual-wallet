@@ -82,7 +82,19 @@ def fund_all_wallet(request):
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def delete_all_wallets(request):
+    if request.method == 'GET':
+        try:
+            all_wallets = Wallet.objects.all()
+            all_wallets.delete()
 
+            return Response({"Message": "All wallets have been deleted successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"Error": f"The error {e} occured"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"Error": "Invallid request type"}, status=status.HTTP_400_BAD_REQUEST)
     
 
 
