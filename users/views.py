@@ -1,11 +1,10 @@
-from functools import partial
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserUpdateSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -13,7 +12,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 This endpoint handles registering of employees, only by the admin.
 """
 @api_view(['POST'])
-@permission_classes([IsAdminUser])
 def register_employee(request):
     if request.method == "POST":
         register_serializer = UserRegistrationSerializer(data=request.data)
@@ -26,6 +24,24 @@ def register_employee(request):
     else:
         return Response({"Error": "Invalid request type"})
 
+@api_view(['POST'])
+def create_admin_user(request):
+    if request.method == 'POST':
+        superuser_serializer = UserRegistrationSerializer(data=request.data)
+        if superuser_serializer.is_valid():
+            username = superuser_serializer.data.get('username')
+            email = superuser_serializer.data.get('email')
+            password = superuser_serializer.data.get('password')
+            first_name = superuser_serializer.data.get('first_name')
+            last_name = superuser_serializer.data.get('last_name')
+
+            superuser = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name, is_superuser=True, is_staff=True)
+            superuser.save()
+            return Response({"Message": "Superuser has been created"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"Error": superuser_serializer.erros}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"Error": "You're using the wrong request type"})
 
 """
 This endpoint handles login in of created employees by the admin.
