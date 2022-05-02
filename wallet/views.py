@@ -6,11 +6,12 @@ from rest_framework import status
 from .models import Wallet
 from .serializers import WalletSerializer, FundWalletSerializer
 from rest_framework.permissions import IsAdminUser
-
+from drf_yasg.utils import swagger_auto_schema
 
 """
 This endpoint gets all the wallet object for each user.
 """
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def all_wallets(request):
@@ -28,6 +29,8 @@ def all_wallets(request):
 """
 This endpoint handles the display of each individual wallet, provided the user id is passed in the url as well.
 """
+
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def user_wallet_view(request, id):
@@ -45,6 +48,8 @@ def user_wallet_view(request, id):
 """
 This endpoint handles the funding of single wallets, providing the user id of the wallet you want to fund
 """
+
+@swagger_auto_schema(method='PATCH', request_body=FundWalletSerializer)
 @api_view(['PATCH'])
 @permission_classes([IsAdminUser])
 def fund_single_wallet(request, id):
@@ -67,6 +72,7 @@ def fund_single_wallet(request, id):
 """
 This endpoint handles bulk wallet funding, i.e funding all user wallets
 """
+@swagger_auto_schema(method='PATCH', request_body=FundWalletSerializer)
 @api_view(['PATCH'])
 def fund_all_wallet(request):
     if request.method == "PATCH":
@@ -82,6 +88,7 @@ def fund_all_wallet(request):
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def delete_all_wallets(request):

@@ -6,11 +6,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 """"
 This endpoint handles registering of employees, only by the admin.
 """
+@swagger_auto_schema(method='POST', request_body=UserRegistrationSerializer)
 @api_view(['POST'])
 def register_employee(request):
     if request.method == "POST":
@@ -24,6 +27,8 @@ def register_employee(request):
     else:
         return Response({"Error": "Invalid request type"})
 
+
+@swagger_auto_schema(method='POST', request_body=UserRegistrationSerializer)
 @api_view(['POST'])
 def create_admin_user(request):
     if request.method == 'POST':
@@ -39,13 +44,15 @@ def create_admin_user(request):
             superuser.save()
             return Response({"Message": "Superuser has been created"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"Error": superuser_serializer.erros}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Error": superuser_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"Error": "You're using the wrong request type"})
 
 """
 This endpoint handles login in of created employees by the admin.
 """
+
+@swagger_auto_schema(method='POST', request_body=UserLoginSerializer)
 @api_view(['POST'])
 def login_employee(request):
     if request.method == 'POST':
@@ -69,6 +76,8 @@ def login_employee(request):
 """
 This endpoint handle returning of individual users with their firstname passed as a parameter in the url
 """
+
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user(request, firstname):
@@ -83,6 +92,8 @@ def get_user(request, firstname):
 """
 This endpoint handles updating user information of individual users by passing the firstname as a parameter in the url
 """
+
+@swagger_auto_schema(method='PATCH', request_body=UserUpdateSerializer)
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def update_user(request, firstname):
@@ -97,6 +108,7 @@ def update_user(request, firstname):
     else:
         return Response({"Error": "You don't have perimissions to edit this users info"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def delete_all_users(request):
