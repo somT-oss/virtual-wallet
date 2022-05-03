@@ -20,8 +20,14 @@ def register_employee(request):
         register_serializer = UserRegistrationSerializer(data=request.data)
         if register_serializer.is_valid():
             register_serializer.save()
-
-            return Response(register_serializer.data, status=status.HTTP_201_CREATED)
+            message = {
+                "id": register_serializer.data.get('id'),
+                "username": register_serializer.data.get('username'),
+                "first_name": register_serializer.data.get('first_name'),
+                "last_name": register_serializer.data.get('last_name'),
+                "email": register_serializer.data.get('email')
+            }
+            return Response(message, status=status.HTTP_201_CREATED)
         else:
             return Response({"Error": register_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -42,7 +48,14 @@ def create_admin_user(request):
 
             superuser = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name, is_superuser=True, is_staff=True)
             superuser.save()
-            return Response({"Message": "Superuser has been created", "Details": superuser_serializer.data}, status=status.HTTP_201_CREATED)
+            message = {
+                "id": superuser_serializer.data.get('id'),
+                "username": superuser_serializer.data.get('username'),
+                "first_name":superuser_serializer.data.get('first_name'),
+                "last_name": superuser_serializer.data.get('last_name'),
+                "email": superuser_serializer.data.get('email')
+            }
+            return Response({"Message": "Superuser has been created", "Details": message}, status=status.HTTP_201_CREATED)
         else:
             return Response({"Error": superuser_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
