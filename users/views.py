@@ -21,7 +21,7 @@ def register_employee(request):
         if register_serializer.is_valid():
             register_serializer.save()
 
-            return Response({"Success": f"Employee Account Created for {register_serializer.data.get('first_name')} {register_serializer.data.get('last_name')}"}, status=status.HTTP_201_CREATED)
+            return Response(register_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"Error": register_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -42,7 +42,7 @@ def create_admin_user(request):
 
             superuser = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name, is_superuser=True, is_staff=True)
             superuser.save()
-            return Response({"Message": "Superuser has been created"}, status=status.HTTP_201_CREATED)
+            return Response({"Message": "Superuser has been created", "Details": superuser_serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({"Error": superuser_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -85,7 +85,7 @@ def get_user(request, firstname):
         user = User.objects.get(first_name=firstname)
         serialized_user = UserRegistrationSerializer(user)
 
-        return Response({"Message": f"Hello {serialized_user.data.get('first_name')} {serialized_user.data.get('last_name')}"}, status=status.HTTP_200_OK)
+        return Response(serialized_user.data, status=status.HTTP_200_OK)
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
