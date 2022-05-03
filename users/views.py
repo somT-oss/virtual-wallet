@@ -7,7 +7,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
-
+from wallet.models import Wallet
+from wallet.serializers import WalletSerializer
 
 """"
 This endpoint handles registering of employees, only by the admin.
@@ -121,12 +122,19 @@ This endpoint handle returning of individual users with their firstname passed a
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user(request, firstname):
+def get_user(request, id):
     if request.method == 'GET':
-        user = User.objects.get(first_name=firstname)
+        user = User.objects.get(id=id)
         serialized_user = UserRegistrationSerializer(user)
+        user_wallet = Wallet.objects.get(user=user.id)
+        serialized_user_wallet = WalletSerializer(user_wallet)
 
-        return Response(serialized_user.data, status=status.HTTP_200_OK)
+        message = {
+            "first_name": serialized_user.data.get('first_name'),
+            "last_name": serialized_user.data.get('last_name'),
+            "balance": serialized_user_wallet.data.get('balance')
+        }
+        return Response(message, status=status.HTTP_200_OK)
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,13 +145,17 @@ This endpoint handles updating user information of individual users by passing t
 @swagger_auto_schema(method='PATCH', request_body=UserUpdateSerializer)
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
-def update_user(request, firstname):
-    if request.user.first_name == firstname:
+def update_user(request, id):
+    if request.user.id == id:
         update_serializer = UserUpdateSerializer(request.user, data=request.data, partial=True)
         if update_serializer.is_valid():
             update_serializer.save()
-
-            return Response({"Message": "User data has been updated"}, status=status.HTTP_200_OK)
+            message =  {
+                "first_name": update_serializer.data.get('first_name'),
+                "last_name": update_serializer.data.get('last_name'),
+                "email": update_serializer.data.get('email')
+            }
+            return Response({"Update Message": message}, status=status.HTTP_200_OK)
         else:
             return Response(update_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
