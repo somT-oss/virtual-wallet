@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 
 """"
@@ -19,6 +18,14 @@ def register_employee(request):
     if request.method == "POST":
         register_serializer = UserRegistrationSerializer(data=request.data)
         if register_serializer.is_valid():
+            user_email = register_serializer.validated_data.get('email')
+            all_emails = User.objects.all().values_list('email', flat=True)
+            if user_email in all_emails:
+                return Response({"Error": "This email is already in use"}, status=status.HTTP_400_BAD_REQUEST)
+            user_username = register_serializer.validated_data.get('username')
+            all_usernames = User.objects.values_list('username', flat=True)
+            if user_username in all_usernames:
+                return Response({"Error": "This username is already in use"}, status=status.HTTP_400_BAD_REQUEST)
             register_serializer.save()
             message = {
                 "id": register_serializer.data.get('id'),
@@ -40,6 +47,27 @@ def create_admin_user(request):
     if request.method == 'POST':
         superuser_serializer = UserRegistrationSerializer(data=request.data)
         if superuser_serializer.is_valid():
+            
+            """
+            Checks if an email already exists in the database.
+            """
+            
+            user_email = superuser_serializer.validated_data.get('email')
+            all_emails = User.objects.all().values_list('email', flat=True)
+            if user_email in all_emails:
+                return Response({"Error": "This email is already in use"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
+            """
+            Checks if a username already exists in the database.
+            """
+            
+            user_username = superuser_serializer.validated_data.get('username')
+            all_usernames = User.objects.values_list('username', flat=True)
+            if user_username in all_usernames:
+                return Response({"Error": "This username is already in use"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
             username = superuser_serializer.data.get('username')
             email = superuser_serializer.data.get('email')
             password = superuser_serializer.data.get('password')
