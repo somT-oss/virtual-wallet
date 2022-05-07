@@ -100,16 +100,16 @@ def login_employee(request):
     if request.method == 'POST':
         user_serializer = UserLoginSerializer(data=request.data)
         if user_serializer.is_valid():
-            user_email = user_serializer.data.get("email")
-            user = User.objects.get(email=user_email)
-            if user:
+            try:
+                user_email = user_serializer.data.get("email")
+                user = User.objects.get(email=user_email)
                 refresh = RefreshToken.for_user(user)
                 return Response ({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                 }, status=status.HTTP_200_OK)
-            else:
-                return Response({"Error": f"User with {user_email} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception:
+                return Response({"Error": f"Sorry, user with email {user_email} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"Error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
