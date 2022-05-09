@@ -78,7 +78,6 @@ def create_admin_user(request):
             superuser = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name, is_superuser=True, is_staff=True)
             superuser.save()
             message = {
-                "id": superuser_serializer.data.get('id'),
                 "username": superuser_serializer.data.get('username'),
                 "first_name":superuser_serializer.data.get('first_name'),
                 "last_name": superuser_serializer.data.get('last_name'),
