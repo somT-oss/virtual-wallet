@@ -164,8 +164,8 @@ def update_user(request, id):
     else:
         return Response({"Error": "You don't have perimissions to edit this users info"}, status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method='GET')
-@api_view(['GET'])
+@swagger_auto_schema(method='POST')
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_all_users(request):
     if request.method == 'GET':
