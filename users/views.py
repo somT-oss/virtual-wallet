@@ -124,17 +124,20 @@ This endpoint handle returning of individual users with their firstname passed a
 @permission_classes([IsAuthenticated])
 def get_user(request, id):
     if request.method == 'GET':
-        user = User.objects.get(id=id)
-        serialized_user = UserRegistrationSerializer(user)
-        user_wallet = Wallet.objects.get(user=user.id)
-        serialized_user_wallet = WalletSerializer(user_wallet)
+        try:
+            user = User.objects.get(id=id)
+            serialized_user = UserRegistrationSerializer(user)
+            user_wallet = Wallet.objects.get(user=user.id)
+            serialized_user_wallet = WalletSerializer(user_wallet)
 
-        message = {
-            "first_name": serialized_user.data.get('first_name'),
-            "last_name": serialized_user.data.get('last_name'),
-            "balance": serialized_user_wallet.data.get('balance')
-        }
-        return Response(message, status=status.HTTP_200_OK)
+            message = {
+                "first_name": serialized_user.data.get('first_name'),
+                "last_name": serialized_user.data.get('last_name'),
+                "balance": serialized_user_wallet.data.get('balance')
+            }
+            return Response(message, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"Error": f"The user with id {id} does not exist"})
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
