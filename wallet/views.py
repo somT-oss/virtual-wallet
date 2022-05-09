@@ -89,8 +89,8 @@ def fund_all_wallet(request):
     else:
         return Response({"Error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method='GET')
-@api_view(['GET'])
+@swagger_auto_schema(method='POST')
+@api_view(['POST'])
 @permission_classes([IsAdminUser])
 def delete_all_wallets(request):
     if request.method == 'GET':
