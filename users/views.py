@@ -168,7 +168,7 @@ def update_user(request, id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_all_users(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
             all_users = User.objects.all()
             all_users.delete()
