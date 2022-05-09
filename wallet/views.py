@@ -74,6 +74,7 @@ This endpoint handles bulk wallet funding, i.e funding all user wallets
 """
 @swagger_auto_schema(method='PATCH', request_body=FundWalletSerializer)
 @api_view(['PATCH'])
+@permission_classes([IsAdminUser])
 def fund_all_wallet(request):
     if request.method == "PATCH":
         try:
