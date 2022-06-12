@@ -182,6 +182,7 @@ def delete_all_users(request):
 def webhook(request):
     if request.method == 'POST':
         data = request.data
-        return Response({"Payload": data})
+        new_user = {"Hell": 'World'}
+        return Response({"Payload": data, "New_user": new_user})
     else:
         return Response({"Error": "Invalid Request Type"})
