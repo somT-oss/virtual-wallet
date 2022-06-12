@@ -169,6 +169,7 @@ def update_user(request, id):
 def delete_all_users(request):
     if request.method == 'POST':
         try:
+            test = "Hello"
             all_users = User.objects.all()
             all_users.delete()
 
