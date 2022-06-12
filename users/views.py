@@ -177,3 +177,11 @@ def delete_all_users(request):
             return Response({"Error": f"The error {e} occured"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"Error": "Invallid request type"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def webhook(request):
+    if request.method == 'POST':
+        data = request.data
+        return Response({"Payload": data})
+    else:
+        return Response({"Error": "Invalid Request Type"})
